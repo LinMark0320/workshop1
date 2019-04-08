@@ -29,47 +29,70 @@
             <h1 class="navbar-title text-center">圖書管理系統</h1>
         </nav>
     </header>
+    <main>
+
+        <div class="uk-container align-center">
+
+
+
+            <button type="button" id="add_book" class="k-button k-primary btn-add-book">新增書籍</button>
+            <div id="book_grid">
+            </div>
+        </div>
+    </main>
+    <script src="../data/book-data.js"></script>
+
     <div id="example">
+
         <div id="grid"></div>
+
         <script>
-        $(document).ready(function () {
-            $("#grid").kendoGrid({
-                dataSource: {
-                    type: "odata",
-                    transport: {
-                        read: "../../data/book-data.js"
+            $(document).ready(function () {
+                $("#grid").kendoGrid({
+                    dataSource: {
+                        data: bookData,
+                        schema: {
+                            model: {
+                                fields: {
+                                    BookName: { type: "string" },
+                                    BookBoughtDate: { type: "string" },
+                                    BookPrice: { type: "Number" },
+                                    BookAmount: { type: "Number" },
+                                   //BookDeliveredDate: { type: "string" },
+                                    BookAmount: { type: "string" }
+                                }
+                            }
+                        },
+                        pageSize: 20
                     },
-                    pageSize: 20
-                },
-                height: 550,
-                groupable: true,
-                sortable: true,
-                pageable: {
-                    refresh: true,
-                    pageSizes: true,
-                    buttonCount: 5
-                },
-                columns: [{
-                    template: "<div class='customer-photo'" +
-                    "style='background-image: url(../content/web/Customers/#:data.CustomerID#.jpg);'></div>" +
-                    "<div class='customer-name'>#: ContactName #</div>",
-                    field: "ContactName",
-                    title: "Contact Name",
-                    width: 240
-                }, {
-                    field: "ContactTitle",
-                    title: "Contact Title"
-                }, {
-                    field: "CompanyName",
-                    title: "Company Name"
-                }, {
-                    field: "Country",
-                    width: 150
-                }]
+                    height: 550,
+                    scrollable: true,
+                    sortable: true,
+                    filterable: true,
+                    pageable: {
+                        input: true,
+                        numeric: false
+                    },
+                    columns: [
+                        { command: "destroy", width: "130px" },
+                        { field: "BookId", title: "書籍編號", width: "130px" },
+                        { field: "BookName", title: "書籍名稱", width: "130px" },
+                        { field: "BookCategory", title: "書籍總類", width: "130px", values: bookCategoryList },
+                        { field: "BookAuthor", title: "作者", width: "130px" },
+                        {
+                            field: "BookBoughtDate", title: "購買日期", width: "130px"
+                        },
+                        { field: "BookDeliveredDate", title: "送達狀態", width: "130px" ,template:"<i class=\"fas fa-car\"></i>" },
+                        { field: "BookPrice", title: "金額", format: "{0:#,0}", width: "130px", attributes: { style: "text-align:right;" } },
+                        { field: "BookAmount", title: "數量", format: "{0:#,0}", width: "130px", attributes: { style: "text-align:right;" } },
+                        { field: "BookTotal", title: "總計", width: "130px", format: "{0:#,0元}" }],
+                    editable: true,
+
+                });
             });
-        });
         </script>
     </div>
+
 
     <style type="text/css">
         .customer-photo {
@@ -96,40 +119,7 @@
 
 
 
-    <main>
-        <div id="example" class="k-content">
-            <div id="background">
-                <div id="calendar">
-                </div>
-            </div>
-            <script>
-        $(document).ready(function () {
-            // 建立 kendoCalendar
-            $("#calendar").kendoCalendar();
-        });
-            </script>
-            <style scoped>
-                #background {
-                    width: 254px;
-                    height: 250px;
-                    margin: 30px auto;
-                    padding: 69px 0 0 11px;
-                }
 
-                #calendar {
-                    width: 241px;
-                }
-            </style>
-        </div>
-        <div class="uk-container align-center">
-            
-
-
-            <button type="button" id="add_book" class="k-button k-primary btn-add-book">新增書籍</button>
-            <div id="book_grid">
-            </div>
-        </div>
-    </main>
     <footer></footer>
     <script type="text/javascript" src="data/book-data.js"></script>
     <script src="./js/jquery-2.1.4.min.js"></script>
