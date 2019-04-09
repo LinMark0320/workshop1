@@ -3,13 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/fontawesome.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./css/kendo.common-material.min.css">
     <link rel="stylesheet" href="./css/kendo.material.min.css">
     <link rel="stylesheet" href="./css/uikit.min.css">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/fontawesome.css">
+
 
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2019.1.220/styles/kendo.common-material.min.css" />
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2019.1.220/styles/kendo.material.min.css" />
@@ -32,18 +33,66 @@
     <main>
 
         <div class="uk-container align-center">
+            <div class="uk-container align-center">
+                <div class="uk-card uk-text-left uk-width-1-3">
+                    <div id="window">
+                        <form id="book_form">
+                            <ul class="fieldlist">
+                                <li>
+                                    <img id="book-image" class="book-image" src="image/database.jpg" alt="">
+                                </li>
+                                <li>
+                                    <label class="required">圖書類別</label>
+                                    <input id="book_category" />
 
 
 
-            <button type="button" id="add_book" class="k-button k-primary btn-add-book">新增書籍</button>
-            <div id="book_grid">
+                                </li>
+                                <li>
+                                    <label class="required">書名</label>
+                                    <input id="book_name" type="text" required validationMessage="必填" />
+                                </li>
+                                <li>
+                                    <label class="required">作者</label>
+                                    <input id="book_author" type="text" required validationMessage="必填" />
+                                </li>
+                                <li>
+                                    <label class="required">購買日期</label>
+                                    <input id="book_boughtdate" class="datepicker" title="datepicker" required validationMessage="必填" />
+                                </li>
+                                <li>
+                                    <label>送達日期</label>
+                                    <input id="book_delivereddate" class="datepicker" title="datepicker" />
+                                </li>
+                                <li>
+                                    <label class="required">金額</label>
+                                    <input id="book_price" type="number" class="numeric" min="0" step="1" style="text-align: right" />
+                                </li>
+                                <li>
+                                    <label class="required">數量</label>
+                                    <input id="book_amount" type="number" class="numeric" min="0" step="1" style="text-align: right" />
+                                </li>
+                                <li>
+                                    <span>
+                                        <!--// 總計&nbsp;<span id="book_total"></span> 元-->
+                                    </span>
+                                </li>
+
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+                <button type="button" id="add_book" class="k-button k-primary btn-add-book">新增書籍</button>
+                <div id="book_grid">
+                </div>
             </div>
         </div>
     </main>
-    <script src="../data/book-data.js"></script>
+    
+    <script src="./data/book-data.js"></script>
 
     <div id="example">
-
+        <input id="searchbox" class="k-textbox" style="width: 100%;" />
         <div id="grid"></div>
 
         <script>
@@ -58,7 +107,7 @@
                                     BookBoughtDate: { type: "string" },
                                     BookPrice: { type: "Number" },
                                     BookAmount: { type: "Number" },
-                                   //BookDeliveredDate: { type: "string" },
+                                    BookDeliveredDate: { type: "string" },
                                     BookAmount: { type: "string" }
                                 }
                             }
@@ -82,12 +131,115 @@
                         {
                             field: "BookBoughtDate", title: "購買日期", width: "130px"
                         },
-                        { field: "BookDeliveredDate", title: "送達狀態", width: "130px" ,template:"<i class=\"fas fa-car\"></i>" },
+                        {
+                            field: "BookDeliveredDate", title: "送達狀態", onmouseover: "111", width: "130px", template: function (item) {
+                                console.log(item.BookDeliveredDate);
+                                if (item.BookDeliveredDate != undefined) {
+                                    console.log('Hello there');
+                                    return "<i class=\"fas fa-truck\"></i>";
+                                } else {
+                                    console.log("NO");
+                                    return "";
+                                }
+
+                            }
+                        },
                         { field: "BookPrice", title: "金額", format: "{0:#,0}", width: "130px", attributes: { style: "text-align:right;" } },
                         { field: "BookAmount", title: "數量", format: "{0:#,0}", width: "130px", attributes: { style: "text-align:right;" } },
                         { field: "BookTotal", title: "總計", width: "130px", format: "{0:#,0元}" }],
                     editable: true,
+                });
+            });
+            $(document).ready(function () {
+                var myWindow = $("#window"),
+                    add_book = $("#add_book");
 
+                add_book.click(function () {
+                    myWindow.data("kendoWindow").open();
+                    add_book.fadeOut();
+                });
+
+                function onClose() {
+                    add_book.fadeIn();
+                }
+
+                myWindow.kendoWindow({
+                    width: "600px",
+                    title: "About Alvar Aalto",
+                    visible: false,
+                    actions: [
+                        "Pin",
+                        "Minimize",
+                        "Maximize",
+                        "Close"
+                    ],
+                    close: onClose
+                })
+            });
+
+
+            $("#book_category").kendoDropDownList({
+                dataTextField: "text",
+                dataValueField: "value",
+                dataSource: [
+                    { text: "資料庫", value: "database" },
+                    { text: "家庭保健", value: "home" },
+                    { text: "語言", value: "language" },
+                    { text: "網際網路", value: "internet" },
+                    { text: "系統", value: "system" }
+                ],
+                index: 0,
+                change: changeImg
+            });
+
+            $(document).ready(function () {
+                $(".datepicker").kendoDatePicker({
+                    format: "yyyy-MM-dd"
+                });
+            });
+            $(document).ready(function () {
+                $(".numeric").kendoNumericTextBox({
+                    format: "{0:N0}"
+                });
+            });
+            function changeImg() {
+                var book_img_value = $("#book_category").val();
+                var book_imgsrc = document.getElementById("book-image");
+                book_imgsrc.src = "image/" + book_img_value + ".jpg";
+            };
+            $(document).ready(function () {
+                var validator = $("#book_form").kendoValidator().data("kendoValidator"),
+                    status = $(".status");
+
+                $("form").submit(function (event) {
+                    event.preventDefault();
+                    if (validator.validate()) {
+                        status.text("新增成功")
+                            .removeClass("invalid")
+                            .addClass("valid");
+                    } else {
+                        status.text("新增失敗")
+                            .removeClass("valid")
+                            .addClass("invalid");
+                    }
+                });
+            });
+            $("#searchbox").keyup(function () {
+                var val = $('#searchbox').val();
+                $("#grid").data("kendoGrid").dataSource.filter({
+                    logic: "or",
+                    filters: [
+                        {
+                            field: "BookName",
+                            operator: "contains",
+                            value: val
+                        },
+                        {
+                            field: "BookAuthor",
+                            operator: "contains",
+                            value: val
+                        }
+                    ],
                 });
             });
         </script>
